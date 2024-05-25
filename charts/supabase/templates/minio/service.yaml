@@ -12,6 +12,10 @@ spec:
       targetPort: 9000
       protocol: TCP
       name: http
+    - port: 9001
+      targetPort: 9001
+      protocol: TCP
+      name: service
   selector:
     {{- include "supabase.minio.selectorLabels" . | nindent 4 }}
 {{- end }}

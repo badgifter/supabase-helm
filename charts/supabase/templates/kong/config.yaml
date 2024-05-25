@@ -16,8 +16,6 @@ data:
     sed \
     -e "s/\${SUPABASE_ANON_KEY}/${SUPABASE_ANON_KEY}/" \
     -e "s/\${SUPABASE_SERVICE_KEY}/${SUPABASE_SERVICE_KEY}/" \
-    -e "s/\${DASHBOARD_USERNAME}/${DASHBOARD_USERNAME}/" \
-    -e "s/\${DASHBOARD_PASSWORD}/${DASHBOARD_PASSWORD}/" \
     /usr/local/kong/template.yml \
     > /usr/local/kong/kong.yml
 
@@ -50,7 +48,7 @@ data:
     services:
     {{- if .Values.auth.enabled }}
       - name: auth-v1-open
-        url: http://{{ include "supabase.auth.fullname" . }}:{{ .Values.auth.service.port }}/verify
+        url: http://{{ include "supabase.auth.fullname" . }}.{{ .Release.Namespace }}.svc.cluster.local:{{ .Values.auth.service.port }}/verify
         routes:
           - name: auth-v1-open
             strip_path: true
@@ -59,7 +57,7 @@ data:
         plugins:
           - name: cors
       - name: auth-v1-open-callback
-        url: http://{{ include "supabase.auth.fullname" . }}:{{ .Values.auth.service.port }}/callback
+        url: http://{{ include "supabase.auth.fullname" . }}.{{ .Release.Namespace }}.svc.cluster.local:{{ .Values.auth.service.port }}/callback
         routes:
           - name: auth-v1-open-callback
             strip_path: true
@@ -68,7 +66,7 @@ data:
         plugins:
           - name: cors
       - name: auth-v1-open-authorize
-        url: http://{{ include "supabase.auth.fullname" . }}:{{ .Values.auth.service.port }}/authorize
+        url: http://{{ include "supabase.auth.fullname" . }}.{{ .Release.Namespace }}.svc.cluster.local:{{ .Values.auth.service.port }}/authorize
         routes:
           - name: auth-v1-open-authorize
             strip_path: true
@@ -77,8 +75,8 @@ data:
         plugins:
           - name: cors
       - name: auth-v1
-        _comment: "GoTrue: /auth/v1/* -> http://{{ include "supabase.auth.fullname" . }}:{{ .Values.auth.service.port }}/*"
-        url: http://{{ include "supabase.auth.fullname" . }}:{{ .Values.auth.service.port }}
+        _comment: "GoTrue: /auth/v1/* -> http://{{ include "supabase.auth.fullname" . }}.{{ .Release.Namespace }}.svc.cluster.local:{{ .Values.auth.service.port }}/*"
+        url: http://{{ include "supabase.auth.fullname" . }}.{{ .Release.Namespace }}.svc.cluster.local:{{ .Values.auth.service.port }}
         routes:
           - name: auth-v1-all
             strip_path: true
@@ -98,8 +96,8 @@ data:
     {{- end }}
     {{- if .Values.rest.enabled }}
       - name: rest-v1
-        _comment: "PostgREST: /rest/v1/* -> http://{{ include "supabase.rest.fullname" . }}:{{ .Values.rest.service.port }}/*"
-        url: http://{{ include "supabase.rest.fullname" . }}:{{ .Values.rest.service.port }}/
+        _comment: "PostgREST: /rest/v1/* -> http://{{ include "supabase.rest.fullname" . }}.{{ .Release.Namespace }}.svc.cluster.local:{{ .Values.rest.service.port }}/*"
+        url: http://{{ include "supabase.rest.fullname" . }}.{{ .Release.Namespace }}.svc.cluster.local:{{ .Values.rest.service.port }}/
         routes:
           - name: rest-v1-all
             strip_path: true
@@ -117,8 +115,8 @@ data:
                 - admin
                 - anon
       - name: graphql-v1
-        _comment: 'PostgREST: /graphql/v1/* -> http://{{ include "supabase.rest.fullname" . }}:{{ .Values.rest.service.port }}/rpc/graphql'
-        url: http://{{ include "supabase.rest.fullname" . }}:{{ .Values.rest.service.port }}/rpc/graphql
+        _comment: 'PostgREST: /graphql/v1/* -> http://{{ include "supabase.rest.fullname" . }}.{{ .Release.Namespace }}.svc.cluster.local:{{ .Values.rest.service.port }}/rpc/graphql'
+        url: http://{{ include "supabase.rest.fullname" . }}.{{ .Release.Namespace }}.svc.cluster.local:{{ .Values.rest.service.port }}/rpc/graphql
         routes:
           - name: graphql-v1-all
             strip_path: true
@@ -143,8 +141,8 @@ data:
     {{- end }}
     {{- if .Values.realtime.enabled }}
       - name: realtime-v1
-        _comment: "Realtime: /realtime/v1/* -> ws://{{ include "supabase.realtime.fullname" . }}:{{ .Values.realtime.service.port }}/socket/*"
-        url: http://{{ include "supabase.realtime.fullname" . }}:{{ .Values.realtime.service.port }}/socket
+        _comment: "Realtime: /realtime/v1/* -> ws://{{ include "supabase.realtime.fullname" . }}.{{ .Release.Namespace }}.svc.cluster.local:{{ .Values.realtime.service.port }}/socket/*"
+        url: http://{{ include "supabase.realtime.fullname" . }}.{{ .Release.Namespace }}.svc.cluster.local:{{ .Values.realtime.service.port }}/socket
         routes:
           - name: realtime-v1-all
             strip_path: true
@@ -164,8 +162,8 @@ data:
     {{- end }}
     {{- if .Values.storage.enabled }}
       - name: storage-v1
-        _comment: "Storage: /storage/v1/* -> http://{{ include "supabase.storage.fullname" . }}:{{ .Values.storage.service.port }}/*"
-        url: http://{{ include "supabase.storage.fullname" . }}:{{ .Values.storage.service.port }}/
+        _comment: "Storage: /storage/v1/* -> http://{{ include "supabase.storage.fullname" . }}.{{ .Release.Namespace }}.svc.cluster.local:{{ .Values.storage.service.port }}/*"
+        url: http://{{ include "supabase.storage.fullname" . }}.{{ .Release.Namespace }}.svc.cluster.local:{{ .Values.storage.service.port }}/
         routes:
           - name: storage-v1-all
             strip_path: true
@@ -176,7 +174,7 @@ data:
     {{- end }}
     {{- if .Values.functions.enabled }}
       - name: functions-v1
-        _comment: 'Edge Functions: /functions/v1/* -> http://{{ include "supabase.functions.fullname" . }}:{{ .Values.functions.service.port }}/*'
+        _comment: 'Edge Functions: /functions/v1/* -> http://{{ include "supabase.functions.fullname" . }}.{{ .Release.Namespace }}.svc.cluster.local:{{ .Values.functions.service.port }}/*'
         url: http://functions:{{ .Values.functions.service.port }}/
         routes:
           - name: functions-v1-all
@@ -188,8 +186,8 @@ data:
     {{- end }}
     {{- if .Values.analytics.enabled }}
       - name: analytics-v1
-        _comment: 'Analytics: /analytics/v1/* -> http://{{ include "supabase.analytics.fullname" . }}:{{ .Values.analytics.service.port }}/*'
-        url: http://{{ include "supabase.analytics.fullname" . }}:{{ .Values.analytics.service.port }}/
+        _comment: 'Analytics: /analytics/v1/* -> http://{{ include "supabase.analytics.fullname" . }}.{{ .Release.Namespace }}.svc.cluster.local:{{ .Values.analytics.service.port }}/*'
+        url: http://{{ include "supabase.analytics.fullname" . }}.{{ .Release.Namespace }}.svc.cluster.local:{{ .Values.analytics.service.port }}/
         routes:
           - name: analytics-v1-all
             strip_path: true
@@ -198,8 +196,8 @@ data:
     {{- end }}
     {{- if .Values.meta.enabled }}
       - name: meta
-        _comment: "pg-meta: /pg/* -> http://{{ include "supabase.meta.fullname" . }}:{{ .Values.meta.service.port }}/*"
-        url: http://{{ include "supabase.meta.fullname" . }}:{{ .Values.meta.service.port }}/
+        _comment: "pg-meta: /pg/* -> http://{{ include "supabase.meta.fullname" . }}.{{ .Release.Namespace }}.svc.cluster.local:{{ .Values.meta.service.port }}/*"
+        url: http://{{ include "supabase.meta.fullname" . }}.{{ .Release.Namespace }}.svc.cluster.local:{{ .Values.meta.service.port }}/
         routes:
           - name: meta-all
             strip_path: true
@@ -215,15 +213,15 @@ data:
               allow:
                 - admin
     {{- end }}
+    {{- if .Values.secret.dashboard }}
       - name: dashboard
-        _comment: 'Studio: /* -> http://{{ include "supabase.studio.fullname" . }}:{{ .Values.studio.service.port }}/*'
-        url: http://{{ include "supabase.studio.fullname" . }}:{{ .Values.studio.service.port }}/
+        _comment: 'Studio: /* -> http://{{ include "supabase.studio.fullname" . }}.{{ .Release.Namespace }}.svc.cluster.local:{{ .Values.studio.service.port }}/*'
+        url: http://{{ include "supabase.studio.fullname" . }}.{{ .Release.Namespace }}.svc.cluster.local:{{ .Values.studio.service.port }}/
         routes:
           - name: dashboard-all
             strip_path: true
             paths:
               - /
-    {{- if .Values.secret.dashboard }}
         plugins:
           - name: cors
           - name: basic-auth

@@ -63,6 +63,9 @@ spec:
             - name: http
               containerPort: 9000
               protocol: TCP
+            - name: service
+              containerPort: 9001
+              protocol: TCP
           {{- with .Values.minio.resources }}
           resources:
             {{- toYaml . | nindent 12 }}

@@ -18,11 +18,11 @@ secret:
   # Anon & Service key: Studio, Storage, Kong
   # JWT Secret: Analytics, Auth, Rest, Realtime, Storage
   jwt:
-    anonKey: ""
-    serviceKey: ""
-    secret: ""
+    # anonKey: ""
+    # serviceKey: ""
+    # secret: ""
     # specify existing secret, which takes precedence over variables above
-    secretRef: ""
+    secretRef: supabase-jwt
     # override secret keys for existing secret refs
     secretRefKey:
       anonKey: anonKey
@@ -31,21 +31,23 @@ secret:
   # database credentials
   # these fields must be provided even if using external database
   db:
-    username: ""
-    password: ""
-    database: ""
+    # username: ""
+    # password: ""
+    # database: ""
     # specify existing secret, which takes precedence over variables above
-    secretRef: ""
+    secretRef: supabase-db
     # override secret keys for existing secret refs
     secretRefKey:
       username: username
       password: password
       database: database
+      rest: rest
+      restpass: restpass
   # analytics Logflare API key
   analytics:
-    apiKey: ""
+    apiKey: e1aae753a0ad49e96b48b4703f8a9e0afbdb6a89a7197cce01ff6be2d0891d2e
     # specify existing secret, which takes precedence over variable above
-    secretRef: ""
+    # secretRef: ""
     # override secret keys for existing secret refs
     secretRefKey:
       apiKey: apiKey
@@ -54,32 +56,55 @@ secret:
     # username: ""
     # password: ""
     # specify existing secret, which takes precedence over variables above
-    # secretRef: ""
+    secretRef: supabase-smtp
     # override secret keys for existing secret refs
     secretRefKey:
       username: username
       password: password
+  auth: 
+    secretRef: supabase-auth
+    secretRefKey:
+      GOTRUE_EXTERNAL_AZURE_CLIENT_ID: GOTRUE_EXTERNAL_AZURE_CLIENT_ID
+      GOTRUE_EXTERNAL_AZURE_ENABLED: GOTRUE_EXTERNAL_AZURE_ENABLED
+      GOTRUE_EXTERNAL_AZURE_REDIRECT_URI: GOTRUE_EXTERNAL_AZURE_REDIRECT_URI
+      GOTRUE_EXTERNAL_AZURE_SECRET: GOTRUE_EXTERNAL_AZURE_SECRET
+      GOTRUE_EXTERNAL_DISCORD_CLIENT_ID: GOTRUE_EXTERNAL_DISCORD_CLIENT_ID
+      GOTRUE_EXTERNAL_DISCORD_ENABLED: GOTRUE_EXTERNAL_DISCORD_ENABLED
+      GOTRUE_EXTERNAL_DISCORD_REDIRECT_URI: GOTRUE_EXTERNAL_DISCORD_REDIRECT_URI
+      GOTRUE_EXTERNAL_DISCORD_SECRET: GOTRUE_EXTERNAL_DISCORD_SECRET
+      GOTRUE_EXTERNAL_FACEBOOK_CLIENT_ID: GOTRUE_EXTERNAL_FACEBOOK_CLIENT_ID
+      GOTRUE_EXTERNAL_FACEBOOK_ENABLED: GOTRUE_EXTERNAL_FACEBOOK_ENABLED
+      GOTRUE_EXTERNAL_FACEBOOK_REDIRECT_URI: GOTRUE_EXTERNAL_FACEBOOK_REDIRECT_URI
+      GOTRUE_EXTERNAL_FACEBOOK_SECRET: GOTRUE_EXTERNAL_FACEBOOK_SECRET
+      GOTRUE_EXTERNAL_GOOGLE_CLIENT_ID: GOTRUE_EXTERNAL_GOOGLE_CLIENT_ID
+      GOTRUE_EXTERNAL_GOOGLE_ENABLED: GOTRUE_EXTERNAL_GOOGLE_ENABLED
+      GOTRUE_EXTERNAL_GOOGLE_REDIRECT_URI: GOTRUE_EXTERNAL_GOOGLE_REDIRECT_URI
+      GOTRUE_EXTERNAL_GOOGLE_SECRET: GOTRUE_EXTERNAL_GOOGLE_SECRET
+      GOTRUE_EXTERNAL_TWITTER_CLIENT_ID: GOTRUE_EXTERNAL_TWITTER_CLIENT_ID
+      GOTRUE_EXTERNAL_TWITTER_ENABLED: GOTRUE_EXTERNAL_TWITTER_ENABLED
+      GOTRUE_EXTERNAL_TWITTER_REDIRECT_URI: GOTRUE_EXTERNAL_TWITTER_REDIRECT_URI
+      GOTRUE_EXTERNAL_TWITTER_SECRET: GOTRUE_EXTERNAL_TWITTER_SECRET
   # secret used to access the studio dashboard
   # leave it empty to disable dashboard authentication
-  dashboard:
-    # username: ""
-    # password: ""
-    # specify existing secret, which takes precedence over variables above
-    # secretRef: ""
-    # override secret keys for existing secret refs
-    secretRefKey:
-      username: username
-      password: password
+  # dashboard:
+  #   username: ""
+  #   password: ""
+  #   # specify existing secret, which takes precedence over variables above
+  #   secretRef: ""
+  #   # override secret keys for existing secret refs
+  #   secretRefKey:
+  #     username: username
+  #     password: password
   # S3 credentials for storage object bucket
   s3:
-    # keyId: ""
-    # accessKey: ""
     # specify existing secret, which takes precedence over variables above
-    # secretRef: ""
+    secretRef: supabase-s3
     # override secret keys for existing secret refs
     secretRefKey:
       keyId: keyId
       accessKey: accessKey
+      #https://0ab626d03116c7beef884677647fdeeb.eu.r2.cloudflarestorage.com
+      # yEqlBJ3ECuMQXPgn8_kS4qD2D25TwlOeVOJ3mtxW
 
 # Optional: Postgres Database
 # A standalone Postgres database configured to work with Supabase services.
@@ -87,7 +112,7 @@ secret:
 # If so, make sure to adjust DB_HOST accordingly to point to the right database service.
 db:
   # Enable database provisioning
-  enabled: true
+  enabled: false
   image:
     repository: supabase/postgres
     pullPolicy: IfNotPresent
@@ -177,7 +202,7 @@ studio:
   image:
     repository: supabase/studio
     pullPolicy: IfNotPresent
-    tag: "latest"
+    tag: "20240520-0259321"
   imagePullSecrets: []
   replicaCount: 1
   nameOverride: ""
@@ -206,13 +231,20 @@ studio:
     type: ClusterIP
     port: 3000
   environment:
-    STUDIO_DEFAULT_ORGANIZATION: Default Organization
-    STUDIO_DEFAULT_PROJECT: Default Project
+    API_URL: https://data.r.land
+    CORS_ORIGIN: https://studio.r.land
+    SUPABASE_URL: https://data.r.land
+    # SUPABASE_URL: https://data.r.land # this is storage url
+    SUPABASE_REST_URL: https://data.r.land/rest/v1/
+    # STUDIO_PG_META_URL: http://supabase-supabase-kong.supabase.svc.cluster.local:8000/pg/
+
+    STUDIO_DEFAULT_ORGANIZATION: R.Land
+    STUDIO_DEFAULT_PROJECT: R.Land
     STUDIO_PORT: "3000"
-    SUPABASE_PUBLIC_URL: http://example.com
+    SUPABASE_PUBLIC_URL: https://data.r.land
     NEXT_PUBLIC_ENABLE_LOGS: "true"
     # Set value to bigquery to use Big Query backend for analytics
-    NEXT_ANALYTICS_BACKEND_PROVIDER: postgres  # postgres, bigquery
+    NEXT_ANALYTICS_BACKEND_PROVIDER: bigquery
   # volumeMounts:
   #   - name: volume_name
   #     mountPath: /path/to/my/secret
@@ -252,7 +284,7 @@ auth:
   image:
     repository: supabase/gotrue
     pullPolicy: IfNotPresent
-    tag: "latest"
+    tag: "v2.152.0"
   imagePullSecrets: []
   replicaCount: 1
   nameOverride: ""
@@ -282,35 +314,42 @@ auth:
     port: 9999
   environment:
     # Override the database hostname if using external database
-    # DB_HOST: DATABASE.NAMESPACE.svc.cluster.local
+    DB_HOST: supabase-db.postgres.svc.cluster.local
     DB_USER: supabase_auth_admin
     DB_PORT: 5432
     DB_DRIVER: postgres
     DB_SSL: disable  # disable, allow, prefer, require, verify-ca, verify-full
-    API_EXTERNAL_URL: http://example.com
+    API_EXTERNAL_URL: https://data.r.land/
     GOTRUE_API_HOST: "0.0.0.0"
     GOTRUE_API_PORT: "9999"
-    GOTRUE_SITE_URL: http://example.com
-    GOTRUE_URI_ALLOW_LIST: "*"
+    GOTRUE_SITE_URL: https://play.r.land/
+    GOTRUE_URI_ALLOW_LIST: "https://localhost:5173/,https://localhost:5173/*,https://localhost:5173/auth/callback,https://localhost:5173/*,https://test.r.land/auth/callback,https://test.r.land/*,https://test.r.land,https://making.r.land/auth/callback,https://making.r.land/*,https://making.r.land,https://play.r.land,https://play.r.land/auth/callback,https://play.r.land/*"
     GOTRUE_DISABLE_SIGNUP: "false"
     GOTRUE_JWT_DEFAULT_GROUP_NAME: authenticated
-    GOTRUE_JWT_ADMIN_ROLES: service_role
+    GOTRUE_JWT_ADMIN_ROLES: "supabase_admin,service_role"
     GOTRUE_JWT_AUD: authenticated
     GOTRUE_JWT_EXP: "3600"
     GOTRUE_EXTERNAL_EMAIL_ENABLED: "true"
     GOTRUE_MAILER_AUTOCONFIRM: "true"
-    # GOTRUE_MAILER_SECURE_EMAIL_CHANGE_ENABLED: true
-    # GOTRUE_SMTP_MAX_FREQUENCY: 1s
-    GOTRUE_SMTP_ADMIN_EMAIL: "SMTP_ADMIN_MAIL"
-    GOTRUE_SMTP_HOST: "SMTP_HOST"
-    GOTRUE_SMTP_PORT: "SMTP_PORT"
-    GOTRUE_SMTP_SENDER_NAME: "SMTP_SENDER_NAME"
+
+    # GOTRUE_LOG_LEVEL: DEBUG
+    # GOTRUE_LOG_SQL: DEBUG
+
+    GOTRUE_MAILER_SECURE_EMAIL_CHANGE_ENABLED: true
+    GOTRUE_SMTP_MAX_FREQUENCY: 1s
+    GOTRUE_SMTP_ADMIN_EMAIL: "noreply@r.land"
+    GOTRUE_SMTP_HOST: "smtp-relay.gmail.com"
+    GOTRUE_SMTP_PORT: "587"
+    GOTRUE_SMTP_SENDER_NAME: "R.Land | NoReply"
     GOTRUE_EXTERNAL_PHONE_ENABLED: "false"
     GOTRUE_SMS_AUTOCONFIRM: "false"
+
     GOTRUE_MAILER_URLPATHS_INVITE: "/auth/v1/verify"
     GOTRUE_MAILER_URLPATHS_CONFIRMATION: "/auth/v1/verify"
     GOTRUE_MAILER_URLPATHS_RECOVERY: "/auth/v1/verify"
     GOTRUE_MAILER_URLPATHS_EMAIL_CHANGE: "/auth/v1/verify"
+
+    
   # volumeMounts:
   #   - name: volume_name
   #     mountPath: /path/to/my/secret
@@ -339,7 +378,8 @@ auth:
     maxReplicas: 100
     targetCPUUtilizationPercentage: 80
     # targetMemoryUtilizationPercentage: 80
-  nodeSelector: {}
+  nodeSelector:
+    server: sema-1
   tolerations: []
   affinity: {}
 
@@ -350,7 +390,7 @@ rest:
   image:
     repository: postgrest/postgrest
     pullPolicy: IfNotPresent
-    tag: "latest"
+    tag: "v12.0.3"
   imagePullSecrets: []
   nameOverride: ""
   fullnameOverride: ""
@@ -379,12 +419,12 @@ rest:
     port: 3000
   environment:
     # Override the database hostname if using external database
-    # DB_HOST: DATABASE.NAMESPACE.svc.cluster.local
+    DB_HOST: supabase-db.postgres.svc.cluster.local
     DB_USER: authenticator
     DB_PORT: 5432
     DB_DRIVER: postgres
-    DB_SSL: disable  # disable, allow, prefer, require, verify-ca, verify-full
-    PGRST_DB_SCHEMAS: public,storage,graphql_public
+    DB_SSL: disable # disable, allow, prefer, require, verify-ca, verify-full
+    PGRST_DB_SCHEMAS: public,storage,graphql_public, market
     PGRST_DB_ANON_ROLE: anon
     PGRST_DB_USE_LEGACY_GUCS: false
     PGRST_APP_SETTINGS_JWT_EXP: 3600
@@ -427,7 +467,7 @@ realtime:
   image:
     repository: supabase/realtime
     pullPolicy: IfNotPresent
-    tag: "latest"
+    tag: "v2.29.2"
   imagePullSecrets: []
   nameOverride: ""
   fullnameOverride: ""
@@ -456,7 +496,7 @@ realtime:
     port: 4000
   environment:
     # Override the database hostname if using external database
-    # DB_HOST: DATABASE.NAMESPACE.svc.cluster.local
+    DB_HOST: supabase-db.postgres.svc.cluster.local
     DB_USER: supabase_admin
     DB_PORT: 5432
     DB_SSL: disable  # disable, allow, prefer, require, verify-ca, verify-full
@@ -508,7 +548,7 @@ meta:
   image:
     repository: supabase/postgres-meta
     pullPolicy: IfNotPresent
-    tag: "latest"
+    tag: "v0.81.0"
   imagePullSecrets: []
   replicaCount: 1
   nameOverride: ""
@@ -538,7 +578,7 @@ meta:
     port: 8080
   environment:
     # Override the database hostname if using external database
-    # DB_HOST: DATABASE.NAMESPACE.svc.cluster.local
+    DB_HOST: supabase-db.postgres.svc.cluster.local
     DB_USER: supabase_admin
     DB_PORT: 5432
     DB_DRIVER: postgres
@@ -583,7 +623,7 @@ storage:
   image:
     repository: supabase/storage-api
     pullPolicy: IfNotPresent
-    tag: "latest"
+    tag: "v1.3.1"
   imagePullSecrets: []
   replicaCount: 1
   nameOverride: ""
@@ -613,24 +653,30 @@ storage:
     port: 5000
   environment:
     # Override the database hostname if using external database
-    # DB_HOST: DATABASE.NAMESPACE.svc.cluster.local
+    DB_HOST: supabase-db.postgres.svc.cluster.local
     DB_USER: supabase_storage_admin
     DB_PORT: 5432
     DB_DRIVER: postgres
     DB_SSL: disable  # disable, allow, prefer, require, verify-ca, verify-full
     PGOPTIONS: -c search_path=storage,public
     FILE_SIZE_LIMIT: "52428800"
-    STORAGE_BACKEND: file  # file, s3
-    FILE_STORAGE_BACKEND_PATH: /var/lib/storage
+    STORAGE_BACKEND: s3  # file, s3
+    # FILE_STORAGE_BACKEND_PATH: /var/lib/storage
     TENANT_ID: stub
     REGION: stub
     GLOBAL_S3_BUCKET: stub
+
+    # POSTGREST_URL: http://supabase-supabase-rest.supabase.svc.cluster.local:3000
+    # IMGPROXY_URL: http://supabase-supabase-imgproxy.supabase.svc.cluster.local:5001
+    ENABLE_IMAGE_TRANSFORMATION: "true"
+    XDG_CONFIG_HOME: /var/lib/storage
+    TUS_URL_PATH: /storage/v1/upload/resumable
     # Set variables below and secret.s3 above to enable S3 storage bucket
     # If using this chart's minio, skip the endpoint and protocol below
     # GLOBAL_S3_ENDPOINT: http://minio:9000
-    # GLOBAL_S3_PROTOCOL: http
-    # GLOBAL_S3_FORCE_PATH_STYLE: true
-    # AWS_DEFAULT_REGION: stub
+    GLOBAL_S3_PROTOCOL: http
+    GLOBAL_S3_FORCE_PATH_STYLE: true
+    AWS_DEFAULT_REGION: stub
   # volumeMounts:
   #   - name: volume_name
   #     mountPath: /path/to/my/secret
@@ -654,8 +700,8 @@ storage:
     #   cpu: 100m
     #   memory: 128Mi
   persistence:
-    enabled: true
-    storageClassName: ""
+    enabled: false
+    storageClassName: longhorn
     annotations: {}
     size: 10Gi
     accessModes:
@@ -708,7 +754,7 @@ imgproxy:
     port: 5001
   environment:
     IMGPROXY_BIND: ":5001"
-    IMGPROXY_LOCAL_FILESYSTEM_ROOT: /
+    # IMGPROXY_LOCAL_FILESYSTEM_ROOT: /
     IMGPROXY_USE_ETAG: "true"
     IMGPROXY_ENABLE_WEBP_DETECTION: "true"
   # volumeMounts:
@@ -734,8 +780,8 @@ imgproxy:
     #   cpu: 100m
     #   memory: 128Mi
   persistence:
-    enabled: true
-    storageClassName: ""
+    enabled: false
+    storageClassName: longhorn
     annotations: {}
     size: 10Gi
     accessModes:
@@ -758,7 +804,7 @@ kong:
   image:
     repository: kong
     pullPolicy: IfNotPresent
-    tag: "latest"
+    tag: "2.8.1"
   imagePullSecrets: []
   replicaCount: 1
   nameOverride: ""
@@ -791,18 +837,22 @@ kong:
     KONG_DECLARATIVE_CONFIG: /usr/local/kong/kong.yml
     # https://github.com/supabase/cli/issues/14
     KONG_DNS_ORDER: LAST,A,CNAME
-    KONG_PLUGINS: request-transformer,cors,key-auth,acl,basic-auth
+    KONG_PLUGINS: request-transformer,cors,key-auth,acl # ,basic-auth if using dashboard
     KONG_NGINX_PROXY_PROXY_BUFFER_SIZE: 160k
     KONG_NGINX_PROXY_PROXY_BUFFERS: 64 160k
-    KONG_LOG_LEVEL: warn
+    KONG_LOG_LEVEL: debug
   ingress:
-    enabled: true
+    enabled: false
     className: "nginx"
     annotations:
       nginx.ingress.kubernetes.io/rewrite-target: /
-      # cert-manager.io/cluster-issuer: "letsencrypt-staging"
+      cert-manager.io/cluster-issuer: "stage"
       # kubernetes.io/tls-acme: "true"
-    tls: []
+    tls:
+      - hosts:
+          - data.r.land
+        secretName: data-tls
+    
       # Define TLS secret for SSL termination.
       # This section can be left blank if using cluster certificate manager.
       # Otherwise, setting this in tandem with certificate manager will overwrite the secret name.
@@ -810,7 +860,7 @@ kong:
       #   hosts:
       #     - example.com
     hosts:
-      - host: example.com
+      - host: studio.r.land
         paths:
           - path: /
             pathType: Prefix
@@ -849,7 +899,7 @@ kong:
 # Analytics
 analytics:
   # Enable analytics provisioning
-  enabled: true
+  enabled: false
   image:
     repository: supabase/logflare
     pullPolicy: IfNotPresent
@@ -884,19 +934,20 @@ analytics:
   environment:
     LOGFLARE_NODE_HOST: 127.0.0.1
     # Override the database hostname if using external database
-    # DB_HOST: DATABASE.NAMESPACE.svc.cluster.local
+    DB_HOSTNAME: supabase-db.postgres.svc.cluster.local
     DB_USERNAME: supabase_admin
     DB_PORT: 5432
     DB_DRIVER: postgresql
+    DB_SSL: disable
     DB_SCHEMA: _analytics
     LOGFLARE_SINGLE_TENANT: "true"
     LOGFLARE_SUPABASE_MODE: "true"
-    FEATURE_FLAG_OVERRIDE: multibackend=true
+    # FEATURE_FLAG_OVERRIDE: multibackend=true
   # Enable Big Query backend for analytics
   bigQuery:
-    enabled: false
-    projectId: google-project-id
-    projectNumber: google-project-number
+    enabled: true
+    projectId: dc-rland
+    projectNumber: 114278478536
     gcloudJson: ""
   # volumeMounts:
   #   - name: volume_name
@@ -933,11 +984,11 @@ analytics:
 # Vector
 vector:
   # Enable vector provisioning
-  enabled: true
+  enabled: false
   image:
     repository: timberio/vector
     pullPolicy: IfNotPresent
-    tag: "latest"
+    tag: "0.28.1-alpine"
   imagePullSecrets: []
   replicaCount: 1
   nameOverride: ""
@@ -1000,7 +1051,7 @@ vector:
 # Functions
 functions:
   # Enable functions provisioning
-  enabled: true
+  enabled: false
   image:
     repository: supabase/edge-runtime
     pullPolicy: IfNotPresent
@@ -1034,15 +1085,15 @@ functions:
     port: 9000
   environment:
     # Override the database hostname if using external database
-    # DB_HOST: DATABASE.NAMESPACE.svc.cluster.local
+    DB_HOST: supabase-db.postgres.svc.cluster.local
     DB_USERNAME: supabase_functions_admin
     DB_PORT: 5432
     DB_DRIVER: postgresql
     DB_SSL: disable  # disable, allow, prefer, require, verify-ca, verify-full
   # Mount user functions
-  # volumeMounts:
-  #   - name: my_functions
-  #     mountPath: /home/deno/functions/main/main
+  volumeMounts:
+    - name: my_functions
+      mountPath: /home/deno/functions/main/main
   # volumes:
   #   - name: my_functions
   #     secret:
@@ -1074,7 +1125,7 @@ functions:
 
 # minio
 minio:
-  enabled: false
+  enabled: true
   image:
     repository: minio/minio
     pullPolicy: IfNotPresent
@@ -1131,8 +1182,8 @@ minio:
     #   cpu: 100m
     #   memory: 128Mi
   persistence:
-    enabled: false
-    storageClassName: ""
+    enabled: true
+    storageClassName: longhorn
     annotations: {}
     size: 10Gi
     accessModes:

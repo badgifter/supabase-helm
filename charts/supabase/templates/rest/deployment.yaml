@@ -43,22 +43,32 @@ spec:
             - name: DB_HOST
               value: {{ include "supabase.db.fullname" . }}
             {{- end }}
+            - name: RDB_USER
+              valueFrom:
+                secretKeyRef:
+                  {{- if .Values.secret.db.secretRef }}
+                  name: {{ .Values.secret.db.secretRef }}
+                  key: {{ .Values.secret.db.secretRefKey.rest | default "rest" }}
+                  {{- else }}
+                  name: {{ include "supabase.secret.db" . }}
+                  key: rest
+                  {{- end }}
             - name: DB_PASSWORD
               valueFrom:
                 secretKeyRef:
                   {{- if .Values.secret.db.secretRef }}
                   name: {{ .Values.secret.db.secretRef }}
-                  key: {{ .Values.secret.db.secretRefKey.password | default "password" }}
+                  key: {{ .Values.secret.db.secretRefKey.restpass | default "restpass" }}
                   {{- else }}
                   name: {{ include "supabase.secret.db" . }}
-                  key: password
+                  key: restpass
                   {{- end }}
             - name: DB_PASSWORD_ENC
               valueFrom:
                 secretKeyRef:
                   {{- if .Values.secret.db.secretRef }}
                   name: {{ .Values.secret.db.secretRef }}
-                  key: {{ .Values.secret.db.secretRefKey.password | default "password" }}
+                  key: {{ .Values.secret.db.secretRefKey.restpass | default "restpass" }}
                   {{- else }}
                   name: {{ include "supabase.secret.db" . }}
                   key: password_encoded
@@ -74,7 +84,7 @@ spec:
                   key: database
                   {{- end }}
             - name: PGRST_DB_URI
-              value: $(DB_DRIVER)://$(DB_USER):$(DB_PASSWORD_ENC)@$(DB_HOST):$(DB_PORT)/$(DB_NAME)?sslmode=$(DB_SSL)
+              value: $(DB_DRIVER)://$(RDB_USER):$(DB_PASSWORD_ENC)@$(DB_HOST):$(DB_PORT)/$(DB_NAME)?sslmode=$(DB_SSL)
             - name: PGRST_JWT_SECRET
               valueFrom:
                 secretKeyRef:

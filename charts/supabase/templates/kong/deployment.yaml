@@ -61,28 +61,28 @@ spec:
                   name: {{ include "supabase.secret.jwt" . }}
                   key: serviceKey
                   {{- end }}
-            {{- if .Values.secret.dashboard }}
-            - name: DASHBOARD_USERNAME
-              valueFrom:
-                secretKeyRef:
-                  {{- if .Values.secret.dashboard.secretRef }}
-                  name: {{ .Values.secret.dashboard.secretRef }}
-                  key: {{ .Values.secret.dashboard.secretRefKey.username | default "username" }}
-                  {{- else }}
-                  name: {{ include "supabase.secret.dashboard" . }}
-                  key: username
-                  {{- end }}
-            - name: DASHBOARD_PASSWORD
-              valueFrom:
-                secretKeyRef:
-                  {{- if .Values.secret.dashboard.secretRef }}
-                  name: {{ .Values.secret.dashboard.secretRef }}
-                  key: {{ .Values.secret.dashboard.secretRefKey.password | default "password" }}
-                  {{- else }}
-                  name: {{ include "supabase.secret.dashboard" . }}
-                  key: password
-                  {{- end }}
-            {{- end }}
+            # {{- if .Values.secret.dashboard }}
+            # - name: DASHBOARD_USERNAME
+            #   valueFrom:
+            #     secretKeyRef:
+            #       {{- if .Values.secret.dashboard.secretRef }}
+            #       name: {{ .Values.secret.dashboard.secretRef }}
+            #       key: {{ .Values.secret.dashboard.secretRefKey.username | default "username" }}
+            #       {{- else }}
+            #       name: {{ include "supabase.secret.dashboard" . }}
+            #       key: username
+            #       {{- end }}
+            # - name: DASHBOARD_PASSWORD
+            #   valueFrom:
+            #     secretKeyRef:
+            #       {{- if .Values.secret.dashboard.secretRef }}
+            #       name: {{ .Values.secret.dashboard.secretRef }}
+            #       key: {{ .Values.secret.dashboard.secretRefKey.password | default "password" }}
+            #       {{- else }}
+            #       name: {{ include "supabase.secret.dashboard" . }}
+            #       key: password
+            #       {{- end }}
+            # {{- end }}
           {{- with .Values.kong.livenessProbe }}
           livenessProbe:
             {{- toYaml . | nindent 12 }}
