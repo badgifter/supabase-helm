@@ -231,17 +231,17 @@ studio:
     type: ClusterIP
     port: 3000
   environment:
-    API_URL: https://data.r.land
-    CORS_ORIGIN: https://studio.r.land
-    SUPABASE_URL: https://data.r.land
-    # SUPABASE_URL: https://data.r.land # this is storage url
-    SUPABASE_REST_URL: https://data.r.land/rest/v1/
+    API_URL: https://data.waxhub.io
+    CORS_ORIGIN: https://studio.waxhub.io
+    SUPABASE_URL: https://data.waxhub.io
+    # SUPABASE_URL: https://data.waxhub.io # this is storage url
+    SUPABASE_REST_URL: https://data.waxhub.io/rest/v1/
     # STUDIO_PG_META_URL: http://supabase-supabase-kong.supabase.svc.cluster.local:8000/pg/
 
-    STUDIO_DEFAULT_ORGANIZATION: R.Land
-    STUDIO_DEFAULT_PROJECT: R.Land
+    STUDIO_DEFAULT_ORGANIZATION: Waxhub.io
+    STUDIO_DEFAULT_PROJECT: Waxhub.io
     STUDIO_PORT: "3000"
-    SUPABASE_PUBLIC_URL: https://data.r.land
+    SUPABASE_PUBLIC_URL: https://data.waxhub.io
     NEXT_PUBLIC_ENABLE_LOGS: "true"
     # Set value to bigquery to use Big Query backend for analytics
     NEXT_ANALYTICS_BACKEND_PROVIDER: bigquery
@@ -319,11 +319,11 @@ auth:
     DB_PORT: 5432
     DB_DRIVER: postgres
     DB_SSL: disable  # disable, allow, prefer, require, verify-ca, verify-full
-    API_EXTERNAL_URL: https://data.r.land/
+    API_EXTERNAL_URL: https://data.waxhub.io/
     GOTRUE_API_HOST: "0.0.0.0"
     GOTRUE_API_PORT: "9999"
-    GOTRUE_SITE_URL: https://play.r.land/
-    GOTRUE_URI_ALLOW_LIST: "https://localhost:5173/,https://localhost:5173/*,https://localhost:5173/auth/callback,https://localhost:5173/*,https://test.r.land/auth/callback,https://test.r.land/*,https://test.r.land,https://making.r.land/auth/callback,https://making.r.land/*,https://making.r.land,https://play.r.land,https://play.r.land/auth/callback,https://play.r.land/*"
+    GOTRUE_SITE_URL: https://waxhub.io/
+    GOTRUE_URI_ALLOW_LIST: "https://localhost:5173/,https://localhost:5173/*,https://localhost:5173/auth/callback,https://localhost:5173/*,https://test.waxhub.io/auth/callback,https://test.waxhub.io/*,https://test.waxhub.io,https://making.waxhub.io/auth/callback,https://making.waxhub.io/*,https://making.waxhub.io,https://waxhub.io,https://waxhub.io/auth/callback,https://waxhub.io/*"
     GOTRUE_DISABLE_SIGNUP: "false"
     GOTRUE_JWT_DEFAULT_GROUP_NAME: authenticated
     GOTRUE_JWT_ADMIN_ROLES: "supabase_admin,service_role"
@@ -340,7 +340,7 @@ auth:
     GOTRUE_SMTP_ADMIN_EMAIL: "noreply@r.land"
     GOTRUE_SMTP_HOST: "smtp-relay.gmail.com"
     GOTRUE_SMTP_PORT: "587"
-    GOTRUE_SMTP_SENDER_NAME: "R.Land | NoReply"
+    GOTRUE_SMTP_SENDER_NAME: "Waxhub.io | NoReply"
     GOTRUE_EXTERNAL_PHONE_ENABLED: "false"
     GOTRUE_SMS_AUTOCONFIRM: "false"
 
@@ -852,7 +852,7 @@ kong:
       # kubernetes.io/tls-acme: "true"
     tls:
       - hosts:
-          - data.r.land
+          - data.waxhub.io
         secretName: data-tls
     
       # Define TLS secret for SSL termination.
@@ -862,7 +862,7 @@ kong:
       #   hosts:
       #     - example.com
     hosts:
-      - host: studio.r.land
+      - host: studio.waxhub.io
         paths:
           - path: /
             pathType: Prefix
