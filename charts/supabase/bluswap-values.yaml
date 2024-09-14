@@ -12,6 +12,7 @@
 # |-- 11. Vector
 # |-- 12. Functions
 # |-- 13. Minio
+# helm upgrade --install supabase -n supablu -f ./bluswap-values.yaml .
 
 secret:
   # jwt will be used to reference secret in multiple services:
@@ -378,8 +379,8 @@ auth:
     maxReplicas: 100
     targetCPUUtilizationPercentage: 80
     # targetMemoryUtilizationPercentage: 80
-  nodeSelector:
-    server: sema-1
+  # nodeSelector:
+  #   server: sema-1
   tolerations: []
   affinity: {}
 
